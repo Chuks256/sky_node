@@ -1,4 +1,4 @@
-const dbModule = require("../dbConfig/db");
+const mongooseModel = require("../dbConfig/db");
 
 // colors
 // fiery -> red 
@@ -9,7 +9,7 @@ const dbModule = require("../dbConfig/db");
 // royal -> orange 
 // pride  - multicolor
 
-const userModel = new dbModule.Schema({
+const userModel = new mongooseModel.Schema({
     profileName:{type:String,required:true},
     profileBio:{type:String},
     profilePics:{type:String},
@@ -19,9 +19,9 @@ const userModel = new dbModule.Schema({
     points:{type:Number,default:0},
     dailyCheckins:{type:Number,default:0},
     referralCodes:[{type:String}],
-    dateCreated:{type:Date , default:new Date().now()}
+    dateCreated:{type:String}
 })
 
-const User = dbModule.model("User",userModel);
+const User = mongooseModel.model("User",userModel);
 
 module.exports = {User}

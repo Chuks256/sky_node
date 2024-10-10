@@ -1,6 +1,6 @@
-const dbModule = require("../dbConfig/db");
+const mongooseModel = require("../dbConfig/db");
 
-const postModel = new dbModule.Schema({
+const postModel = new mongooseModel.Schema({
         postOwnerId:{type:String},
         content:{type:String},
         media:{
@@ -19,6 +19,6 @@ const postModel = new dbModule.Schema({
         ]
     })
 
-const Post = dbModule.model("Post",postModel);
+const Post = mongooseModel.model("Post",postModel);
 
 module.exports = {Post}

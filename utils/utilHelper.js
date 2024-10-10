@@ -1,6 +1,6 @@
 
 const ellipticModule = require("elliptic");
-const defineEllipticModule = new ellipticModule.ec("sep256k1");
+const defineEllipticModule = new ellipticModule.ec("ed25519");
 const cryptoModule = require("crypto");
 
 const utilHelper={

@@ -28,7 +28,8 @@ class functionModules{
             const data={
             profileName:profileName,
             publicKey:convertPrivToPub,
-            ambientColor: ambientColor 
+            ambientColor: ambientColor,
+            dateCreated:new Date().toISOString().slice(0,10) 
             }
             try{
                  await new User(data);
@@ -98,7 +99,7 @@ catch(exception){
 
 
     // FUNCTION FOR REACTING TO POST 
-    async upVotePost(res,res){
+    async upVotePost(req,res){
         const {authorization} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         const {postId,accountId}=req.body;
@@ -370,6 +371,11 @@ catch(exception){
        catch(err){
         res.status(process.env.TECHNICAL_ISSUE).json("Something went wrong")
        }
+    }
+
+    // FUNCTION TO CHECK SYSTEM HEALTH
+    async isSystemOk(req,res){
+        res.json(process.env.SYSTEM_OK).json({message:true})
     }
 
     // DO  THIS LATER
