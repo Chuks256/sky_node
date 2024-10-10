@@ -69,7 +69,7 @@ catch(exception){
     }
 
 
-    // FUNCTIONFOR POSTING CONTENT 
+    // FUNCTION FOR POSTING CONTENT 
     async postContent(req,res){
         const {authorization,postContent,media} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
@@ -101,15 +101,20 @@ catch(exception){
     async upVotePost(res,res){
         const {authorization} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
-        const {postId}=req.body;
+        const {postId,accountId}=req.body;
         try{
             // get user id 
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const getSpecificPost = await Post.findOne({_id:postId});
             getSpecificPost.upVoteReaction +=1;
-            getUserId.points+=VOTE_POINT;
+            
+            if(getUserId._id != accountId){
+            getUserId.points+=UPVOTE_POINT;
             await getUserId.save();
+            
+            }
             await getSpecificPost.save();
+            res.status(process.env.SYSTEM_OK)
         }
         catch(err){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
@@ -158,10 +163,12 @@ catch(exception){
 
     // FUNCTION TO COMMENT ON POST 
     async commentOnPost(req,res){
-        const {postId,comment_content,authorization} =req.body;
+        const {postId,accountId,comment_content,authorization} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         try{
+
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
+            const getAccountCommentedOn= await User.findOne({_id:accountId});
             const getSpecificPost = await Post.findOne({_id:postId});
             const payloadData={
                 userId:getUserId._id,
@@ -169,12 +176,18 @@ catch(exception){
                 timeCommented:new Date().toISOString().slice(0,10)
             }
 
-            // Give specific user point
-            getUserId.points+=COMMENT_POINTS;
-            await getSpecificPost.comments.push(payloadData)
-
-            await getUserId.save();
-            await getSpecificPost.save();
+            if(getUserId._id != getAccountCommentedOn._id){
+                getUserId.points+=COMMENT_POINTS;
+                await getUserId.save();
+                await getSpecificPost.comments.push(payloadData)
+                await getSpecificPost.save();
+            }
+            else{
+                if(getUserId._id===getAccountCommentedOn._id){
+                    await getSpecificPost.comments.push(payloadData)
+                    await getSpecificPost.save();                 
+                }
+            }
             res.status(process.env.SYSTEM_OK).json({message:"commented successfully"})
         }
         catch(err){
@@ -317,7 +330,7 @@ catch(exception){
 
     // FUNCTION FOR PERFOMING DAILY CHECKIN 
     async performDailyCheckin(req,res){
-        
+
     }
 
     // FUNCTION FOR GETTING USER POINTS 
