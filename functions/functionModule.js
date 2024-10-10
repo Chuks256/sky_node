@@ -4,13 +4,19 @@ const {utilHelper} = require("../utils/utilHelper");
 const jwt = require("jsonwebtoken")
 const {Post}= require("../models/post.model")
 
+// points to give 
+const UPVOTE_POINT = 50;
+const DAILY_LOGINS_POINTS=[50,100,150,200,250,500];
+const REFERRAL_POINTS = 100;
+const COMMENT_POINTS =15;
+
+// Define class 
 class functionModules{
 
     // function for creating new user account 
     async createNewAccount(req,res){
         const {profileName,privateKey,ambientColor}=req.body;
-        const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey)
-       
+        const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey);
         try{
             const checkPrivateKeyExist=await User.findOne({publicKey:convertPrivToPub});
             if(checkPrivateKeyExist){
@@ -24,7 +30,6 @@ class functionModules{
             publicKey:convertPrivToPub,
             ambientColor: ambientColor 
             }
-
             try{
                  await new User(data);
                  const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
@@ -46,7 +51,6 @@ catch(exception){
     async importAccount(req,res){
         const {privateKey}=req.body;
         const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey)
-        
         try{
             const checkPrivateKeyExist=await User.findOne({publicKey:convertPrivToPub});
             if(checkPrivateKeyExist){
@@ -61,22 +65,51 @@ catch(exception){
         }
         catch(error){
             res.status(process.env.TECHNICAL_ISSUE).json({error:"Something went wrong"})
-        }
-        
+        }     
     }
+
 
     // FUNCTIONFOR POSTING CONTENT 
     async postContent(req,res){
-
+        const {authorization,postContent,media} =req.body;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
+        try{
+            if(media.length===0){
+            const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
+            const dataParams={
+                postOwnerId:getUserId._id,
+                content:postContent,
+                timePosted:new Date().toISOString().slice(0,10)
+            }
+            const _createNewPost = await new Post(dataParams);
+            await _createNewPost.save();
+            res.status(process.env.SYSTEM_OK).json({message:"posted successfully"})
+            }
+            else{
+                if(media.length>0){
+                    // upload media to cloud 
+                }
+            }
+        }
+        catch(err){
+            res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
+        }
     }
+
 
     // FUNCTION FOR REACTING TO POST 
     async upVotePost(res,res){
+        const {authorization} =req.body;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         const {postId}=req.body;
         try{
+            // get user id 
+            const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const getSpecificPost = await Post.findOne({_id:postId});
             getSpecificPost.upVoteReaction +=1;
-            getSpecificPost.save();
+            getUserId.points+=VOTE_POINT;
+            await getUserId.save();
+            await getSpecificPost.save();
         }
         catch(err){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
@@ -97,7 +130,7 @@ catch(exception){
     }
 
 
-    // FUNCTION TO DOWNVOE POST 
+    // FUNCTION TO DOWNVOE POST || down
     async downVotePost(req,res){
         const {postId}=req.body;
         try{
@@ -131,11 +164,16 @@ catch(exception){
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const getSpecificPost = await Post.findOne({_id:postId});
             const payloadData={
-                userId:getUserId,
+                userId:getUserId._id,
                 content:comment_content,
                 timeCommented:new Date().toISOString().slice(0,10)
             }
+
+            // Give specific user point
+            getUserId.points+=COMMENT_POINTS;
             await getSpecificPost.comments.push(payloadData)
+
+            await getUserId.save();
             await getSpecificPost.save();
             res.status(process.env.SYSTEM_OK).json({message:"commented successfully"})
         }
@@ -156,7 +194,32 @@ catch(exception){
     }
 
     // FUNCTION TO FOLLW ANOTHER USER ACOUNT 
-    async toggleFollowUser(req,res){}
+    async toggleFollowUser(req,res){
+        const {authorization,accountId} =req.body;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
+        try{
+            const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
+            const findSpecifiedAccount = await User.findOne({_id:accountId});
+            // Run a loop
+            for(const specific_acct_id of findSpecifiedAccount.followers){
+                if(accountId!=specific_acct_id){
+                    await findSpecifiedAccount.followers.push(getUserId._id);
+                    res.status(process.env.SYSTEM_OK).json({message:"Successfully followed account"})
+                }
+                else{
+                    if(accountId === specific_acct_id){
+                        const newFollowerList = findSpecifiedAccount.followers.filter(followers_list =>followers_list !== accountId )
+                        getUserId.followers=newFollowerList;
+                        await getUserId.save();
+                        res.status(process.env.SYSTEM_OK).json({message:" successfully unfollowed account"})
+                    }
+                }
+            }
+        }
+        catch(err){
+            res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
+        }
+    }
 
     // FUNCTION TO GET ALL USERS 
     async listAllUser(req,res){
@@ -168,6 +231,7 @@ catch(exception){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
         }
     }
+
 
     // FUNCTION FOR GETTING SPECIFIC USER FOLLOWERS 
     async getAllFollowers(req,res){
@@ -219,13 +283,14 @@ catch(exception){
         }
     }
 
-    
+
     // FUNCTIION FOR GENERATING REFERRAL CODE 
     async generateReferralCode(req,res){
         const {authorization} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
        try{
         const generatedReferralCodes = utilHelper.generateReferralCodes()
+  
         const getUserReferrals= await User.findOne({publicKey:sanitizeToken.userPublicKey});
         getUserReferrals.referralCodes.push(generatedReferralCodes)
         res.status(process.env.SYSTEM_OK).json({referralCode:generatedReferralCodes});
@@ -252,7 +317,7 @@ catch(exception){
 
     // FUNCTION FOR PERFOMING DAILY CHECKIN 
     async performDailyCheckin(req,res){
-
+        
     }
 
     // FUNCTION FOR GETTING USER POINTS 
