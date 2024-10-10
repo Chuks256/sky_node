@@ -2,10 +2,10 @@
   "name": "Sky node",
   "version": "1.0.0",
   "description": "the backend function for heart a telegram based reward platform ",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "nodemon src/index.js"
+    "start": "nodemon ./index.js"
   },
   "repository": {
     "type": "git",
