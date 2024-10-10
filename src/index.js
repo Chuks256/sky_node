@@ -1,6 +1,6 @@
 // define required modules 
 require("dotenv").config();
-require("./dbConfig/db")
+require("../dbConfig/db")
 
 // define modules 
 const endpoint_port = process.env.PORT;
@@ -10,9 +10,9 @@ const cors = require("cors");
 const bodyParserModule = require("body-parser");
 
 // define functions
-const functionModule = require("./functions/functionModule");
+const functionModule = require("../functions/functionModule");
 const definedFunction = new functionModule();
-const {function_guard} = require("./guard/functionGuard.secure")
+const {function_guard} = require("../guard/functionGuard.secure")
 
 // setup middlewares 
 app.use(cors())
