@@ -24,11 +24,11 @@ app.use(expressModule.json());
 // define function routes 
 
 // # getters route 
-app.get(`/endpoint/${process.env.API_VERSION}/generatePrivateKey`,function_guard.protectUserRoute,definedFunction.autoGeneratePrivateKey);
+app.get(`/endpoint/${process.env.API_VERSION}/generatePrivateKey`,definedFunction.autoGeneratePrivateKey);
 app.get(`/endpoint/${process.env.API_VERSION}/getUsersFollowers`,function_guard.protectUserRoute,definedFunction.getAllFollowers);
 app.get(`/endpoint/${process.env.API_VERSION}/getUserPointBalance`,function_guard.protectUserRoute,definedFunction.getUserPoint);
 app.get(`/endpoint/${process.env.API_VERSION}/getUserData`,function_guard.protectUserRoute,definedFunction.getUserData);
-app.get(`/endpoint/${process.env.API_VERSION}/isSystemOK`,function_guard.protectUserRoute,definedFunction.isSystemOk);
+app.get(`/endpoint/${process.env.API_VERSION}/isSystemOK`,definedFunction.isSystemOk);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllUsersPost`,function_guard.protectUserRoute,definedFunction.listAllPost);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllUsers`,function_guard.protectUserRoute,definedFunction.listAllUser);
 app.get(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);

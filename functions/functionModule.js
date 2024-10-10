@@ -375,7 +375,7 @@ catch(exception){
 
     // FUNCTION TO CHECK SYSTEM HEALTH
     async isSystemOk(req,res){
-        res.json(process.env.SYSTEM_OK).json({message:true})
+        res.status(process.env.SYSTEM_OK).json({message:true})
     }
 
     // DO  THIS LATER
