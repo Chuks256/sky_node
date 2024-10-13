@@ -33,6 +33,7 @@ class functionModules{
             profileBio:profileBio,
             publicKey:convertPrivToPub,
             ambientColor: ambientColor,
+            points:10,
             dateCreated:new Date().toISOString().slice(0,10) 
             }
             // save use data 
@@ -217,6 +218,7 @@ class functionModules{
             const findSpecificAcctToFollow=await User.findOne({_id:accountId});
             // after getting user account id : check if user was followinf account before
            if(findSpecificAcctToFollow.followers.length===0){
+            findSpecificAcctToFollow.points+=1;
             await findSpecificAcctToFollow.followers.push(getUserId._id);
             await findSpecificAcctToFollow.save();
             res.status(200).json({message:"Successfully followed account"});
@@ -228,7 +230,8 @@ class functionModules{
                     res.json({message:`already following ${findSpecificAcctToFollow.profileName}`})
                 }
                 else{
-                        await findSpecificAcctToFollow.followers.push(getUserId._id);
+                    findSpecificAcctToFollow.points+=1;
+                    await findSpecificAcctToFollow.followers.push(getUserId._id);
                     await findSpecificAcctToFollow.save();
                     res.status(200).json({message:`Successfully followed ${findSpecificAcctToFollow.profileName}`});
                     }
@@ -252,6 +255,7 @@ class functionModules{
                 findSpecificAcctToFollow.followers.forEach(async(_followers)=>{
                   if(getUserId._id.toString()===_followers){
                       const newList=findSpecificAcctToFollow.followers.filter((_oldUser)=> {_oldUser!==`${getUserId._id.toString()}`})
+                      findSpecificAcctToFollow.points-=1;
                       findSpecificAcctToFollow.followers=newList;
                       await findSpecificAcctToFollow.save();
                       res.json({message:`successfully unfollowed ${findSpecificAcctToFollow.profileName}`})
