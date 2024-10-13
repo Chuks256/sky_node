@@ -18,6 +18,7 @@ const userModel = new mongooseModel.Schema({
     followers:[{type:String}],
     points:{type:Number,default:0},
     dailyCheckins:{type:Number,default:0},
+    lastClaimed:{type:String},
     referralCodes:[{type:String}],
     dateCreated:{type:String}
 })

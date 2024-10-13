@@ -34,6 +34,7 @@ class functionModules{
             publicKey:convertPrivToPub,
             ambientColor: ambientColor,
             points:10,
+            lastClaimed:new Date().toISOString().slice(0,10),
             dateCreated:new Date().toISOString().slice(0,10) 
             }
             // save use data 
@@ -334,7 +335,7 @@ class functionModules{
 
     // FUNCTIION FOR GENERATING REFERRAL CODE 
     async generateReferralCode(req,res){
-        const {authorization} =req.body;
+        const {authorization} =req.headers;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
        try{
         const generatedReferralCodes = utilHelper.generateReferralCodes()
@@ -366,7 +367,26 @@ class functionModules{
 
     // FUNCTION FOR PERFOMING DAILY CHECKIN 
     async performDailyCheckin(req,res){
-
+        const {authorization} =req.headers;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET)
+        try{
+            const getUserId=await User.findOne({publicKey:sanitizeToken.userPublicKey})
+           const todaysDate = new Date().toISOString().slice(0,10);
+           if(getUserId.lastClaimed === todaysDate || todaysDate<getUserId.lastClaimed){
+            res.status(200).json({message:'you have claimed your points today come tomorrow'});
+           }
+           else{
+            if(todaysDate>getUserId.lastClaimed || todaysDate !== getUserId.lastClaimed){
+                getUserId.points+=15;
+                getUserId.dailyCheckins+=1;
+                await getUserId.save();
+                res.status(200).json({message:`${getUserId.points} points claimed today come tomorrow` });
+            }
+           }
+        }
+        catch(err){
+            res.status(process.env.TECHNICAL_ISSUE).json("Something went wrong")    
+        }
     }
 
     // FUNCTION FOR GETTING USER POINTS 

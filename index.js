@@ -35,6 +35,9 @@ app.get(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_gua
 app.get(`/endpoint/${process.env.API_VERSION}/listAllReferredUsers`,function_guard.protectUserRoute,definedFunction.getAllReferrals);
 app.get(`/endpoint/${process.env.API_VERSION}/generateReferralCode`,function_guard.protectUserRoute,definedFunction.generateReferralCode);
 app.get(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
+app.get(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 
+
+
 
 
 // # Post routes 
@@ -47,8 +50,6 @@ app.post(`/endpoint/${process.env.API_VERSION}/followAccount`,function_guard.pro
 app.post(`/endpoint/${process.env.API_VERSION}/unFollowAccount`,function_guard.protectUserRoute,definedFunction.unFollowUser);
 app.post(`/endpoint/${process.env.API_VERSION}/removeDownVoteReaction`,function_guard.protectUserRoute,definedFunction.unDownVotePost);
 app.post(`/endpoint/${process.env.API_VERSION}/removeUpVoteReaction`,function_guard.protectUserRoute,definedFunction.unUpVotePost);
-app.post(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 
-
 // sudo endpoint 
 app.post(`/endpoint/${process.env.API_VERSION}/clearAllData`,definedFunction.sudoDeleteAllData); // # soon 
 
