@@ -371,7 +371,7 @@ class functionModules{
 
     // FUNCTION FOR GETTING USER POINTS 
     async getUserPoint(req,res){
-        const {authorization} =req.body;
+        const {authorization} =req.headers;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
        try{
         const getUserData= await User.findOne({publicKey:sanitizeToken.userPublicKey});
@@ -384,7 +384,7 @@ class functionModules{
 
     // FUNCTION FOR GETTING USER DATA 
     async getUserData(req,res){
-        const {authorization} =req.body;
+        const {authorization} =req.headers;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
        try{
         const _getUserData= await User.findOne({publicKey:sanitizeToken.userPublicKey});
@@ -397,7 +397,7 @@ class functionModules{
 
     // FUNCTION FO GET ALL USERS REFERRAL 
     async getAllReferrals(req,res){
-        const {authorization} =req.body;
+        const {authorization} =req.headers;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
        try{
         const getUserReferrals= await User.findOne({publicKey:sanitizeToken.userPublicKey});
