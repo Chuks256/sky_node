@@ -34,14 +34,17 @@ app.get(`/endpoint/${process.env.API_VERSION}/listAllUsers`,function_guard.prote
 app.get(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllReferredUsers`,function_guard.protectUserRoute,definedFunction.getAllReferrals);
 app.get(`/endpoint/${process.env.API_VERSION}/generateReferralCode`,function_guard.protectUserRoute,definedFunction.generateReferralCode);
+app.get(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
+
 
 // # Post routes 
 app.post(`/endpoint/${process.env.API_VERSION}/commentOnPost`,function_guard.protectUserRoute,definedFunction.commentOnPost);
-app.post(`/endpoint/${process.env.API_VERSION}/createNewAccount`,function_guard.protectUserRoute,definedFunction.createNewAccount);
+app.post(`/endpoint/${process.env.API_VERSION}/createNewAccount`,definedFunction.createNewAccount);
+app.post(`/endpoint/${process.env.API_VERSION}/upvote`,function_guard.protectUserRoute,definedFunction.upVotePost)
 app.post(`/endpoint/${process.env.API_VERSION}/downVote`,function_guard.protectUserRoute,definedFunction.downVotePost);
-app.post(`/endpoint/${process.env.API_VERSION}/importAccount`,function_guard.protectUserRoute,definedFunction.importAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/postNewContent`,function_guard.protectUserRoute,definedFunction.postContent);
-app.post(`/endpoint/${process.env.API_VERSION}/toggleFollowAccount`,function_guard.protectUserRoute,definedFunction.toggleFollowUser);
+app.post(`/endpoint/${process.env.API_VERSION}/followAccount`,function_guard.protectUserRoute,definedFunction.followUser);
+app.post(`/endpoint/${process.env.API_VERSION}/unFollowAccount`,function_guard.protectUserRoute,definedFunction.unFollowUser);
 app.post(`/endpoint/${process.env.API_VERSION}/removeDownVoteReaction`,function_guard.protectUserRoute,definedFunction.unDownVotePost);
 app.post(`/endpoint/${process.env.API_VERSION}/removeUpVoteReaction`,function_guard.protectUserRoute,definedFunction.unUpVotePost);
 app.post(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 

@@ -17,37 +17,34 @@ class functionModules{
     async createNewAccount(req,res){
         const {profileName,privateKey,ambientColor}=req.body;
         const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey);
-        try{
-            const checkPrivateKeyExist=await User.findOne({publicKey:convertPrivToPub});
-            if(checkPrivateKeyExist){
-                res.status(process.env.FAILED).json({message:"account already exist"})
-            }
-            else{
-                if(! checkPrivateKeyExist){                    
-            //  define  user data parans 
+        const checkAccountExist=await User.findOne({profileName:profileName});
+
+        if(checkAccountExist!==null){
+            res.status(process.env.SYSTEM_OK).json({message:"Account already exist"})
+        }
+        else{
+            if(checkAccountExist===null){
+                try{                   
+                    //  define  user data parans 
             const data={
             profileName:profileName,
             publicKey:convertPrivToPub,
             ambientColor: ambientColor,
             dateCreated:new Date().toISOString().slice(0,10) 
             }
-            try{
-                 await new User(data);
-                 const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
-                 res.status(process.env.SYSTEM_OK).json({message:"account successfuly created",authorization:userSessionToken});
+                const create_new_account=new User(data);
+                await create_new_account.save();
+                const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
+                res.status(200).json({message:"account successfuly created",authorization:userSessionToken});
+                
             }
             catch(error){
                 res.status(process.env.TECHNICAL_ISSUE).json({error:"Something went wrong"})
-            }
+            }        
         }
     }
 }
-catch(exception){
-            res.status(process.env.TECHNICAL_ISSUE).json({error:'Something went wrong'})
-        }
-    }
-
-
+    
     // import user account 
     async importAccount(req,res){
         const {privateKey}=req.body;
@@ -75,7 +72,7 @@ catch(exception){
         const {authorization,postContent,media} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         try{
-            if(media.length===0){
+            if(media.length===0 || media===""){
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const dataParams={
                 postOwnerId:getUserId._id,
@@ -88,7 +85,7 @@ catch(exception){
             }
             else{
                 if(media.length>0){
-                    // upload media to cloud 
+                    // if post contains photo, upload to cloud , then save content
                 }
             }
         }
@@ -115,7 +112,7 @@ catch(exception){
             
             }
             await getSpecificPost.save();
-            res.status(process.env.SYSTEM_OK)
+            res.status(process.env.SYSTEM_OK).json({msg:"done"})
         }
         catch(err){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
@@ -208,26 +205,54 @@ catch(exception){
     }
 
     // FUNCTION TO FOLLW ANOTHER USER ACOUNT 
-    async toggleFollowUser(req,res){
+    async followUser(req,res){
         const {authorization,accountId} =req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         try{
-            const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
-            const findSpecifiedAccount = await User.findOne({_id:accountId});
-            // Run a loop
-            for(const specific_acct_id of findSpecifiedAccount.followers){
-                if(accountId!=specific_acct_id){
-                    await findSpecifiedAccount.followers.push(getUserId._id);
-                    res.status(process.env.SYSTEM_OK).json({message:"Successfully followed account"})
+            const getUserId=await User.findOne({publicKey:sanitizeToken.userPublicKey})
+            const findSpecificAcctToFollow=await User.findOne({_id:accountId});
+            // after getting user account id : check if user was followinf account before
+           if(findSpecificAcctToFollow.followers.length===0){
+            await findSpecificAcctToFollow.followers.push(getUserId._id);
+            await findSpecificAcctToFollow.save();
+            res.status(200).json({message:"Successfully followed account"});
+           }
+           else{
+            if(findSpecificAcctToFollow.followers.length>0){
+              findSpecificAcctToFollow.followers.forEach(async(_followers)=>{
+                if(getUserId._id.toString()===_followers){
+                    res.json({message:`already following ${findSpecificAcctToFollow.profileName}`})
                 }
                 else{
-                    if(accountId === specific_acct_id){
-                        const newFollowerList = findSpecifiedAccount.followers.filter(followers_list =>followers_list !== accountId )
-                        getUserId.followers=newFollowerList;
-                        await getUserId.save();
-                        res.status(process.env.SYSTEM_OK).json({message:" successfully unfollowed account"})
+                        await findSpecificAcctToFollow.followers.push(getUserId._id);
+                    await findSpecificAcctToFollow.save();
+                    res.status(200).json({message:`Successfully followed ${findSpecificAcctToFollow.profileName}`});
                     }
-                }
+              })
+            }
+           }
+        }
+        catch(err){
+            res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
+        }
+    }
+
+    // FUNCTION T UNFOLLOW ACCOUNT
+    async unFollowUser(req,res){
+        const {authorization,accountId} =req.body;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
+        try{
+            const getUserId=await User.findOne({publicKey:sanitizeToken.userPublicKey})
+            const findSpecificAcctToFollow=await User.findOne({_id:accountId});
+            if(findSpecificAcctToFollow.followers.length>0){
+                findSpecificAcctToFollow.followers.forEach(async(_followers)=>{
+                  if(getUserId._id.toString()===_followers){
+                      const newList=findSpecificAcctToFollow.followers.filter((_oldUser)=> {_oldUser!==`${getUserId._id.toString()}`})
+                      findSpecificAcctToFollow.followers=newList;
+                      await findSpecificAcctToFollow.save();
+                      res.json({message:`successfully unfollowed ${findSpecificAcctToFollow.profileName}`})
+                    }
+                });
             }
         }
         catch(err){
@@ -235,10 +260,11 @@ catch(exception){
         }
     }
 
+
     // FUNCTION TO GET ALL USERS 
     async listAllUser(req,res){
         try{
-            const getAllUser = await User.find();
+            const getAllUser = await User.find({});
             res.status(process.env.SYSTEM_OK).json(getAllUser)
         }
         catch(err){
@@ -328,6 +354,7 @@ catch(exception){
     //     res.status(process.env.TECHNICAL_ISSUE).json("Something went wrong")
     //    }
     // }
+
 
     // FUNCTION FOR PERFOMING DAILY CHECKIN 
     async performDailyCheckin(req,res){

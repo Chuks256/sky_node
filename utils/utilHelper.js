@@ -5,11 +5,11 @@ const cryptoModule = require("crypto");
 
 const utilHelper={
     generateUserPrivateKey:()=>{
-        return defineEllipticModule.genKeyPair().getPrivateKey().toString("hex");
+        return defineEllipticModule.genKeyPair().getPrivate({encoding:"utf-8"}).toString("hex");
     },
 
     generateUserPublicKey:(privatekey="")=>{
-        return defineEllipticModule.keyFromPrivate(privatekey).getPublicKey().toString("hex");
+        return defineEllipticModule.keyFromPrivate(privatekey).getPublic("hex");
     },
 
     generateReferralCodes:()=>{

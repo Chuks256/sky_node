@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const function_guard ={
     protectUserRoute:async(req,res,next)=>{
-        const [authorization] = req.body;
+        const {authorization} = req.body;
         if(authorization.length===0){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"invalid token"})
         }
