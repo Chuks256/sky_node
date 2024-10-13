@@ -3,7 +3,7 @@ require("dotenv").config();
 require("./dbConfig/db")
 
 // define modules 
-const endpoint_port = process.env.PORT;
+const endpoint_port = 4432 || process.env.PORT;
 const expressModule = require("express");
 const app =expressModule();
 const cors = require("cors");
