@@ -49,6 +49,8 @@ app.post(`/endpoint/${process.env.API_VERSION}/removeDownVoteReaction`,function_
 app.post(`/endpoint/${process.env.API_VERSION}/removeUpVoteReaction`,function_guard.protectUserRoute,definedFunction.unUpVotePost);
 app.post(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 
 
+// sudo endpoint 
+app.post(`/endpoint/${process.env.API_VERSION}/clearAllData`,definedFunction.sudoDeleteAllData); // # soon 
 
 
 

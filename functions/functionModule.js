@@ -15,7 +15,7 @@ class functionModules{
 
     // function for creating new user account 
     async createNewAccount(req,res){
-        const {profileName,privateKey,ambientColor}=req.body;
+        const {profileName,profilePics,profileBio,privateKey,ambientColor}=req.body;
         const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey);
         const checkAccountExist=await User.findOne({profileName:profileName});
 
@@ -25,13 +25,17 @@ class functionModules{
         else{
             if(checkAccountExist===null){
                 try{                   
-                    //  define  user data parans 
+            
+            //  define  user data parans 
             const data={
             profileName:profileName,
+            profilePics:profilePics,
+            profileBio:profileBio,
             publicKey:convertPrivToPub,
             ambientColor: ambientColor,
             dateCreated:new Date().toISOString().slice(0,10) 
             }
+            // save use data 
                 const create_new_account=new User(data);
                 await create_new_account.save();
                 const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
@@ -407,6 +411,22 @@ class functionModules{
 
     // DO  THIS LATER
     async deletePost(req,res){}
+
+    // sudo delete all data : wait for 9 seconds for deleting data
+    async sudoDeleteAllData(req,res){
+        const {_secretKey}=req.body;
+        if(_secretKey === process.env._SUDO_GENERAL_REMOVAL){
+            setTimeout(async()=>{
+                await User.deleteMany({});
+                res.status(200).json({message:"All data successfully deleted"})
+            },9000)
+        }
+        else{
+            if(_secretKey !== process.env._SUDO_GENERAL_REMOVAL){
+                res.status(501).json({message:"invalid command"})
+            }
+        }
+    }
 
     async deleteSpecificPostComment(req,res){}
 
