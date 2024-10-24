@@ -42,7 +42,6 @@ class functionModules{
                 await create_new_account.save();
                 const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
                 res.status(200).json({message:"account successfuly created",authorization:userSessionToken});
-                
             }
             catch(error){
                 res.status(process.env.TECHNICAL_ISSUE).json({error:"Something went wrong"})
@@ -325,7 +324,8 @@ class functionModules{
     async autoGeneratePrivateKey(req,res){
         const _autoGeneratePrivateKey=utilHelper.generateUserPrivateKey();
         try{
-            res.status(process.env.SYSTEM_OK).json(_autoGeneratePrivateKey);   
+            const params={privateKey:_autoGeneratePrivateKey}
+            res.status(process.env.SYSTEM_OK).json(params);   
         }
         catch(err){
             res.status(process.env.TECHNICAL_ISSUE).json("Something went wrong")
