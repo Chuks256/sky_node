@@ -34,13 +34,13 @@ app.get(`/endpoint/${process.env.API_VERSION}/listAllUsers`,function_guard.prote
 app.get(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllReferredUsers`,function_guard.protectUserRoute,definedFunction.getAllReferrals);
 app.get(`/endpoint/${process.env.API_VERSION}/generateReferralCode`,function_guard.protectUserRoute,definedFunction.generateReferralCode);
-app.get(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
 app.get(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 
 
 
 
 
 // # Post routes 
+app.post(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/commentOnPost`,function_guard.protectUserRoute,definedFunction.commentOnPost);
 app.post(`/endpoint/${process.env.API_VERSION}/createNewAccount`,definedFunction.createNewAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/upvote`,function_guard.protectUserRoute,definedFunction.upVotePost)
