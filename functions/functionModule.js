@@ -58,7 +58,7 @@ class functionModules{
             const checkPrivateKeyExist=await User.findOne({publicKey:convertPrivToPub});
             if(checkPrivateKeyExist){
                 const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
-                res.status(process.env.SYSTEM_OK).json({message:"account successfully imported",authorization:userSessionToken});
+                res.status(process.env.SYSTEM_OK).json({message:"correct_address",authorization:userSessionToken});
             }
             else{
                 if(!checkPrivateKeyExist){
