@@ -62,7 +62,7 @@ class functionModules{
             }
             else{
                 if(!checkPrivateKeyExist){
-                    res.status(process.env.FAILED).json({message:"invalid address"});
+                    res.status(403).json({message:"invalid address"});
                 }
             }
         }
