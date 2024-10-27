@@ -81,6 +81,8 @@ class functionModules{
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const dataParams={
                 postOwnerId:getUserId._id,
+                profileName:getUserId.profileName,
+                profilePics:getUserId.profilePics,
                 content:postContent,
                 timePosted:new Date().toISOString().slice(0,10)
             }
@@ -205,12 +207,6 @@ class functionModules{
         try{
             const getAllPost = await Post.find();
             if(getAllPost){
-            const getUserById =await User.findOne(getAllPost.postOwnerId);
-            const data={
-                profileName:getUserById.profileName,
-                profilePics:getUserById.profilePics,
-                postMeta:getAllPost
-            }
             res.status(process.env.SYSTEM_OK).json(data)
             }
         }

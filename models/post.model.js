@@ -2,6 +2,8 @@ const mongooseModel = require("../dbConfig/db");
 
 const postModel = new mongooseModel.Schema({
         postOwnerId:{type:String},
+        profilePics:{type:String},
+        profileName:{type:String},
         content:{type:String},
         media:{
             audio:[{type:String}],
