@@ -445,11 +445,12 @@ class functionModules{
         if(_secretKey === process.env._SUDO_GENERAL_REMOVAL){
             setTimeout(async()=>{
                 await User.deleteMany({});
+                await Post.deleteMany({});
                 res.status(200).json({message:"All data successfully deleted"})
             },9000)
         }
         else{
-            if(_secretKey !== process.env._SUDO_GENERAL_REMOVAL){
+            if(_secretKey != process.env._SUDO_GENERAL_REMOVAL){
                 res.status(501).json({message:"invalid command"})
             }
         }
