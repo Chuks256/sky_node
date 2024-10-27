@@ -3,6 +3,7 @@ const {User} = require("../models/user.model");
 const {utilHelper} = require("../utils/utilHelper");
 const jwt = require("jsonwebtoken")
 const {Post}= require("../models/post.model")
+const mongoose=require("mongoose");
 
 // points to give 
 const UPVOTE_POINT = 50;
@@ -203,15 +204,18 @@ class functionModules{
     async listAllPost(req,res){
         try{
             const getAllPost = await Post.find();
-            const getUserById =await User.findOne({_id:getAllPost.postOwnerId});
+            if(getAllPost){
+            const getUserById =await User.findOne(getAllPost.postOwnerId);
             const data={
-                meta:getUserById,
+                profileName:getUserById.profileName,
+                profilePics:getUserById.profilePics,
                 postMeta:getAllPost
             }
             res.status(process.env.SYSTEM_OK).json(data)
+            }
         }
         catch(err){
-            res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
+            res.status(501).json({message:"Something went wrong"})
         }
     }
 
