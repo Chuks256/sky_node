@@ -15,7 +15,7 @@ class functionModules{
 
     // function for creating new user account 
     async createNewAccount(req,res){
-        const {profileName,profilePics,profileBio,privateKey,ambientColor}=req.body;
+        const {profileName,profilePics,privateKey,ambientColor}=req.body;
         const convertPrivToPub=utilHelper.generateUserPublicKey(privateKey);
         const checkAccountExist=await User.findOne({profileName:profileName});
 
@@ -30,7 +30,7 @@ class functionModules{
             const data={
             profileName:profileName,
             profilePics:profilePics,
-            profileBio:profileBio,
+            profileBio:"",
             publicKey:convertPrivToPub,
             ambientColor: ambientColor,
             points:10,
