@@ -25,7 +25,6 @@ class functionModules{
         else{
             if(checkAccountExist===null){
                 try{                   
-            
             //  define  user data parans 
             const data={
             profileName:profileName,
@@ -37,7 +36,7 @@ class functionModules{
             lastClaimed:new Date().toISOString().slice(0,10),
             dateCreated:new Date().toISOString().slice(0,10) 
             }
-            // save use data 
+            // save use da
                 const create_new_account=new User(data);
                 await create_new_account.save();
                 const userSessionToken=jwt.sign({userPublicKey:convertPrivToPub},process.env.ENDPOINT_SESSION_SECRET)
