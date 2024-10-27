@@ -72,10 +72,11 @@ class functionModules{
 
     // FUNCTION FOR POSTING CONTENT 
     async postContent(req,res){
-        const {authorization,postContent,media} =req.body;
+        const{authorization}=req.headers;
+        const {postContent,media}=req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         try{
-            if(media.length===0 || media===""){
+            if(media.length===0){
             const getUserId= await User.findOne({publicKey:sanitizeToken.userPublicKey})
             const dataParams={
                 postOwnerId:getUserId._id,
@@ -84,7 +85,9 @@ class functionModules{
             }
             const _createNewPost = await new Post(dataParams);
             await _createNewPost.save();
-            res.status(process.env.SYSTEM_OK).json({message:"posted successfully"})
+
+            res.status(200).json({message:"posted successfully"})
+            console.log(_createNewPost)
             }
             else{
                 if(media.length>0){
@@ -93,7 +96,7 @@ class functionModules{
             }
         }
         catch(err){
-            res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
+            res.status(501).json({message:"Something went wrong"})
         }
     }
 
