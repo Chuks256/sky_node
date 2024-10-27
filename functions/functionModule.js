@@ -207,7 +207,7 @@ class functionModules{
         try{
             const getAllPost = await Post.find();
             if(getAllPost){
-            res.status(process.env.SYSTEM_OK).json(data)
+            res.status(process.env.SYSTEM_OK).json(getAllPost)
             }
         }
         catch(err){
