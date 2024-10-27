@@ -200,7 +200,7 @@ class functionModules{
     async listAllPost(req,res){
         try{
             const getAllPost = await Post.find();
-            const getUserById =await User.findOne({_id:getAllPost.userId});
+            const getUserById =await User.findOne({_id:getAllPost.postOwnerId});
             const data={
                 meta:getUserById,
                 postMeta:getAllPost
