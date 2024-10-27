@@ -7,7 +7,6 @@ const {Post}= require("../models/post.model")
 // points to give 
 const UPVOTE_POINT = 50;
 const DAILY_LOGINS_POINTS=[50,100,150,200,250,500];
-const REFERRAL_POINTS = 100;
 const COMMENT_POINTS =15;
 
 // Define class 
