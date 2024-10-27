@@ -200,7 +200,12 @@ class functionModules{
     async listAllPost(req,res){
         try{
             const getAllPost = await Post.find();
-            res.status(process.env.SYSTEM_OK).json(getAllPost)
+            const getUserById =await User.findOne({_id:getAllPost.userId});
+            const data={
+                meta:getUserById,
+                postMeta:getAllPost
+            }
+            res.status(process.env.SYSTEM_OK).json(data)
         }
         catch(err){
             res.status(process.env.TECHNICAL_ISSUE).json({message:"Something went wrong"})
