@@ -305,7 +305,7 @@ class functionModules{
     async listUsersPost(req,res){
         const { id }=req.body;
        try{
-        const getUserPost = await Post.findOne({postOwnerId:id})
+        const getUserPost = await Post.find({postOwnerId:id})
         res.status(process.env.SYSTEM_OK).json(getUserPost);
        }
        catch(err){
