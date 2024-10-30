@@ -84,7 +84,7 @@ class functionModules{
                 profileName:getUserId.profileName,
                 profilePics:getUserId.profilePics,
                 content:postContent,
-                timePosted:new Date().toISOString().slice(0,10)
+                timePosted:new Date().getTime()
             }
             const _createNewPost = await new Post(dataParams);
             await _createNewPost.save();
@@ -180,7 +180,7 @@ class functionModules{
             const payloadData={
                 userId:getUserId._id,
                 content:comment_content,
-                timeCommented:new Date().toISOString().slice(0,10)
+                timeCommented:new Date()
             }
 
             if(getUserId._id != getAccountCommentedOn._id){
