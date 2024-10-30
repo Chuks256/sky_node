@@ -44,6 +44,8 @@ app.post(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.im
 app.post(`/endpoint/${process.env.API_VERSION}/commentOnPost`,function_guard.protectUserRoute,definedFunction.commentOnPost);
 app.post(`/endpoint/${process.env.API_VERSION}/createNewAccount`,definedFunction.createNewAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/upvote`,function_guard.protectUserRoute,definedFunction.upVotePost)
+app.post(`/endpoint/${process.env.API_VERSION}/unUpvote`,function_guard.protectUserRoute,definedFunction.unUpVotePost)
+app.post(`/endpoint/${process.env.API_VERSION}/unDownVote`,function_guard.protectUserRoute,definedFunction.unDownVotePost)
 app.post(`/endpoint/${process.env.API_VERSION}/downVote`,function_guard.protectUserRoute,definedFunction.downVotePost);
 app.post(`/endpoint/${process.env.API_VERSION}/postNewContent`,function_guard.protectUserRoute,definedFunction.postContent);
 app.post(`/endpoint/${process.env.API_VERSION}/followAccount`,function_guard.protectUserRoute,definedFunction.followUser);

@@ -106,7 +106,7 @@ class functionModules{
 
     // FUNCTION FOR REACTING TO POST 
     async upVotePost(req,res){
-        const {authorization}=req.body;
+        const {authorization}=req.headers;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         const {postId,accountId}=req.body;
         try{
