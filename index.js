@@ -31,15 +31,14 @@ app.get(`/endpoint/${process.env.API_VERSION}/getUserData`,function_guard.protec
 app.get(`/endpoint/${process.env.API_VERSION}/isSystemOK`,definedFunction.isSystemOk);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllUsersPost`,function_guard.protectUserRoute,definedFunction.listAllPost);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllUsers`,function_guard.protectUserRoute,definedFunction.listAllUser);
-app.get(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);
 app.get(`/endpoint/${process.env.API_VERSION}/listAllReferredUsers`,function_guard.protectUserRoute,definedFunction.getAllReferrals);
 app.get(`/endpoint/${process.env.API_VERSION}/generateReferralCode`,function_guard.protectUserRoute,definedFunction.generateReferralCode);
 app.get(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_guard.protectUserRoute,definedFunction.performDailyCheckin); // # soon 
 
 
-
-
 // # Post routes 
+app.post(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);
+app.post(`/endpoint/${process.env.API_VERSION}/getOtherUserData`,function_guard.protectUserRoute,definedFunction.getOtherUserData);
 app.post(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/commentOnPost`,function_guard.protectUserRoute,definedFunction.commentOnPost);
 app.post(`/endpoint/${process.env.API_VERSION}/createNewAccount`,definedFunction.createNewAccount);

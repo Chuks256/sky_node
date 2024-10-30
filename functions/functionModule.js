@@ -302,11 +302,9 @@ class functionModules{
 
     // FUNCTION FOR SPECIFIC USER POST 
     async listAllUserSpecificPost(res,req){
-        const {authorization} =req.body;
-        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
+        const {id} =req.body;
        try{
-        const getUserFollowers= await User.findOne({publicKey:sanitizeToken.userPublicKey})
-        const getUserPost = await Post.findOne({postOwnerId:getUserFollowers._id})
+        const getUserPost = await Post.findOne({postOwnerId:id})
         res.status(process.env.SYSTEM_OK).json(getUserPost);
        }
        catch(err){
@@ -406,6 +404,27 @@ class functionModules{
        catch(err){
         res.status(process.env.TECHNICAL_ISSUE).json("Something went wrong")
        }
+    }
+
+    async getOtherUserData(req,res){
+        const {id}=req.body;
+        const {authorization} =req.headers;
+        const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
+        try{
+            const _getOtherUserData= await User.findOne({_id:id});
+            if(_getOtherUserData.publicKey===sanitizeToken.userPublicKey){
+                res.status(process.env.SYSTEM_OK).json({data:_getOtherUserData,isUserAcct:true});
+            }
+            else{
+                if(_getOtherUserData.publicKey!=sanitizeToken.userPublicKey){
+                    res.status(process.env.SYSTEM_OK).json({data:_getOtherUserData,isUserAcct:false});
+                }   
+            }
+           }
+           catch(err){
+            res.status(501).json("Something went wrong")
+           }
+
     }
 
     // FUNCTION FOR GETTING USER DATA 
