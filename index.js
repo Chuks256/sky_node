@@ -18,6 +18,7 @@ const {function_guard} = require("./guard/functionGuard.secure")
 app.use(cors())
 app.disable("x-powered-by");
 app.use(bodyParserModule.json())
+app.use(expressModule.json())
 app.use(bodyParserModule.urlencoded({extended:false}));
 app.use(expressModule.json());
 
@@ -37,7 +38,7 @@ app.get(`/endpoint/${process.env.API_VERSION}/performDailyCheck-in`,function_gua
 
 
 // # Post routes 
-app.post(`/endpoint/${process.env.API_VERSION}/listSpecificUserPost`,function_guard.protectUserRoute,definedFunction.listAllUserSpecificPost);
+app.post(`/endpoint/${process.env.API_VERSION}/listUsersPost`,function_guard.protectUserRoute,definedFunction.listUsersPost);
 app.post(`/endpoint/${process.env.API_VERSION}/getOtherUserData`,function_guard.protectUserRoute,definedFunction.getOtherUserData);
 app.post(`/endpoint/${process.env.API_VERSION}/importAccount`,definedFunction.importAccount);
 app.post(`/endpoint/${process.env.API_VERSION}/commentOnPost`,function_guard.protectUserRoute,definedFunction.commentOnPost);

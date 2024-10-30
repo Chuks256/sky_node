@@ -106,7 +106,7 @@ class functionModules{
 
     // FUNCTION FOR REACTING TO POST 
     async upVotePost(req,res){
-        const {authorization} =req.body;
+        const {authorization}=req.body;
         const sanitizeToken = jwt.verify(authorization,process.env.ENDPOINT_SESSION_SECRET);
         const {postId,accountId}=req.body;
         try{
@@ -300,9 +300,10 @@ class functionModules{
        }
     }
 
+
     // FUNCTION FOR SPECIFIC USER POST 
-    async listAllUserSpecificPost(res,req){
-        const {id} =req.body;
+    async listUsersPost(req,res){
+        const { id }=req.body;
        try{
         const getUserPost = await Post.findOne({postOwnerId:id})
         res.status(process.env.SYSTEM_OK).json(getUserPost);
